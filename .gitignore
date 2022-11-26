@@ -1,2 +1,4 @@
 venv/
-RelOKation/RelOKation/settings.py
+venv_310/
+.vscode
+*.env
