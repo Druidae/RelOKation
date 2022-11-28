@@ -9,6 +9,10 @@ from countries.models import CountriesCard
 from countries.serializers import CountriesSerializers
 
 
+"""
+For check code coverage by tests, use {coverage run --source='.' manage.py test .} for generate report and after thet
+use {coverage report} for output result in your terminal. If you won't generate report as html format use coverage html
+"""
 class CountriesApiTestCase(APITestCase):
     def setUp(self):
         self.countries_1 = CountriesCard.objects.create(country_name='countrie 1', currancy='countrie currancy', iso_4217_code='CD', driving_side='right', calling_code='+221', internet_tld='.de', description='This field will be comleted later')

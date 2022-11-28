@@ -3,3 +3,4 @@ venv_310/
 .vscode
 *.env
 *__pycache__/
+*.coverage
