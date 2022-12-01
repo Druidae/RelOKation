@@ -35,7 +35,7 @@ class CountriesApiTestCase(APITestCase):
 
     def test_get_serch(self):
         url = reverse('countriescard-list')
-        response = self.client.get(url, data={'iso_4217_code': 'CD'})
+        response = self.client.get(url, data={'country_name': 'countrie 1'})
         serializer_data = CountriesSerializers([self.countries_1, self.countries_2, self.countries_3], many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data)
@@ -57,22 +57,22 @@ class CountriesApiTestCase(APITestCase):
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(4, CountriesCard.objects.all().count())
 
-    # def test_update(self):
-    #     url = reverse('countriescard-list', args=(self.countries_1.id,))
-    #     data = {
-    #         'country_name': self.countries_1.country_name,
-    #         'currancy': self.countries_1.currancy,
-    #         'iso_4217_code': self.countries_1.iso_4217_code,
-    #         'driving_side': 'left',
-    #         'calling_code': self.countries_1.calling_code,
-    #         'internet_tld': self.countries_1.internet_tld,
-    #         'description': 'This field will be comleted later'
-    #     }
-    #     json_data = json.dumps(data)
-    #     response = self.client.put(url, data=json_data, content_type='application/json')
-    #     self.countries_1.refresh_from_db()
-    #     self.assertEqual(status.HTTP_200_OK, response.status_code)
-    #     self.assertEqual('left', self.countries_1.driving_side)
+    def test_update(self):
+        url = reverse('countriescard-list', args=(self.countries_1.id))
+        data = {
+            'country_name': self.countries_1.country_name,
+            'currancy': self.countries_1.currancy,
+            'iso_4217_code': self.countries_1.iso_4217_code,
+            'driving_side': 'left',
+            'calling_code': self.countries_1.calling_code,
+            'internet_tld': self.countries_1.internet_tld,
+            'description': self.countries_1.description,
+        }
+        json_data = json.dumps(data)
+        response = self.client.put(url, data=json_data, content_type='application/json')
+        self.countries_1.refresh_from_db()
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual('left', self.countries_1.driving_side)
 
 
 

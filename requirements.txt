@@ -4,3 +4,4 @@ Djangorestframework-3.14.0
 Postgresql-14
 psycopg2-binary-2.9.5
 coverage-6.5.0
+django-filter-22.1
