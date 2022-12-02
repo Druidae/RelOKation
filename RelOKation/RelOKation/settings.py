@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'django_filters',
+    'social_django',
 
     'countries',
 ]
@@ -93,6 +94,12 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+# Add desired authentication backends settings
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 
 # Password validation
@@ -148,3 +155,10 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend'
     ]    
 }
+
+# Social Auth setting for Postgresql database
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+
+# Social Outh GitHub key and client ID
+SOCIAL_AUTH_GITHUB_KEY = f"{os.getenv('GITHUB_ID')}"
+SOCIAL_AUTH_GITHUB_SECRET = f"{os.getenv('GITHUB_KEY')}"
