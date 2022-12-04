@@ -5,7 +5,7 @@ from django.urls import path
 
 
 from countries.views import CountriesViewSet
-from countries.views import main_page, sign_up
+from countries.views import main_page, sign_up, sign_in
 
 router = SimpleRouter()
 
@@ -15,7 +15,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url('', include('social_django.urls', namespace='social')),
     path('', main_page),
-    path('register/', sign_up)
+    path('signup/', sign_up),
+    path('signin/', sign_in)
+    #url('accounts/profile/', include())
 ]
 
 urlpatterns += router.urls

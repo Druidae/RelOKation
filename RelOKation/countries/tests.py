@@ -4,6 +4,7 @@ from django.urls import reverse
 from rest_framework import status
 
 import json
+import os
 
 from countries.models import CountriesCard
 from countries.serializers import CountriesSerializers
@@ -73,6 +74,15 @@ class CountriesApiTestCase(APITestCase):
         self.countries_1.refresh_from_db()
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual('left', self.countries_1.driving_side)
+
+    def test_set_env(self):
+        get_keys = f"{os.getenv('GITHUB_ID')}"
+        get_sicrets = f"{os.getenv('GITHUB_KEY')}"
+        real_keys = '020237b4a967aceee23d'
+        real_sicret = 'bd4ac0f871898338d25ae81391e5e78ae6a7d0c4'
+        
+        self.assertEqual(real_keys, get_keys)
+        self.assertEqual(real_sicret, get_sicrets)
 
 
 

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 """ Use dotenv for set invironment variable """
 from dotenv import load_dotenv
+load_dotenv('RelOKation/.env')
 load_dotenv('.env')
 
 from pathlib import Path
@@ -73,6 +74,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
