@@ -2,6 +2,7 @@ from django.test import TestCase
 from rest_framework.test import APITestCase
 from django.urls import reverse
 from rest_framework import status
+from django.contrib.auth.models import User
 
 import json
 import os
@@ -12,10 +13,11 @@ from countries.serializers import CountriesSerializers
 
 """
 For check code coverage by tests, use {coverage run --source='.' manage.py test .} for generate report and after thet
-use {coverage report} for output result in your terminal. If you won't generate report as html format use coverage html
+use {coverage report} for output result in your terminal. If you won't generate report as html format use {coverage html}
 """
 class CountriesApiTestCase(APITestCase):
     def setUp(self):
+        self.user = User.objects.create(username='test_username')
         self.countries_1 = CountriesCard.objects.create(country_name='countrie 1', currancy='countrie currancy', iso_4217_code='CD', driving_side='right', calling_code='+221', internet_tld='.de', description='This field will be comleted later')
         self.countries_2 = CountriesCard.objects.create(country_name='countrie 2', currancy='countrie currancy 2', iso_4217_code='CD2', driving_side='left', calling_code='+2', internet_tld='.re', description='This field will be comleted later')
         self.countries_3 = CountriesCard.objects.create(country_name='countrie 3', currancy='countrie currancy 3', iso_4217_code='CD3', driving_side='right', calling_code='+1', internet_tld='.se', description='This field will be comleted later')
@@ -26,6 +28,14 @@ class CountriesApiTestCase(APITestCase):
         serializer_data = CountriesSerializers([self.countries_1, self.countries_2, self.countries_3], many=True).data
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(serializer_data, response.data)
+
+    def test_get_one(self):
+        url = reverse('countriescard-detail', args=(self.countries_1.id,))
+        response = self.client.get(url)
+        serializer_data = CountriesSerializers(self.countries_1).data
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(serializer_data, response.data)
+
 
     def test_get_serch(self):
         url = reverse('countriescard-list')
@@ -54,12 +64,13 @@ class CountriesApiTestCase(APITestCase):
             'description': 'This field will be comleted later'
         }
         json_data = json.dumps(data)
+        self.client.force_login(self.user)
         response = self.client.post(url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(4, CountriesCard.objects.all().count())
 
     def test_update(self):
-        url = reverse('countriescard-list', args=(self.countries_1.id))
+        url = reverse('countriescard-detail',args=(self.countries_1.id,))
         data = {
             'country_name': self.countries_1.country_name,
             'currancy': self.countries_1.currancy,
@@ -70,19 +81,20 @@ class CountriesApiTestCase(APITestCase):
             'description': self.countries_1.description,
         }
         json_data = json.dumps(data)
+        self.client.force_login(self.user)
         response = self.client.put(url, data=json_data, content_type='application/json')
         self.countries_1.refresh_from_db()
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual('left', self.countries_1.driving_side)
 
-    def test_set_env(self):
-        get_keys = f"{os.getenv('GITHUB_ID')}"
-        get_sicrets = f"{os.getenv('GITHUB_KEY')}"
-        real_keys = '020237b4a967aceee23d'
-        real_sicret = 'bd4ac0f871898338d25ae81391e5e78ae6a7d0c4'
-        
-        self.assertEqual(real_keys, get_keys)
-        self.assertEqual(real_sicret, get_sicrets)
+    def test_delete(self):
+        self.assertEqual(3, CountriesCard.objects.all().count())
+        url = reverse('countriescard-detail',args=(self.countries_1.id,))
+        self.client.force_login(self.user)
+        response = self.client.delete(url)
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+        self.assertEqual(2, CountriesCard.objects.all().count())
+
 
 
 
