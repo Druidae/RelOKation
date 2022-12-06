@@ -225,3 +225,36 @@ class CountriesSerializerTestCase(TestCase):
         ]
 
         self.assertEqual(expected_data, data)
+
+
+class CountriesRelationsApiTestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create(username='test_username')
+        self.user2 = User.objects.create(username='test_username2')
+        self.countries_1 = CountriesCard.objects.create(
+            country_name='countrie 1', 
+            currancy='countrie currancy', 
+            iso_4217_code='CD', 
+            driving_side='right', 
+            calling_code='+221', 
+            internet_tld='.de', 
+            description='This field will be comleted later',
+            owner = self.user
+        )
+        self.countries_2 = CountriesCard.objects.create(
+            country_name='countrie 2', 
+            currancy='countrie currancy 2', 
+            iso_4217_code='CD2', 
+            driving_side='left', 
+            calling_code='+2', 
+            internet_tld='.re', 
+            description='This field will be comleted later',
+            owner = self.user
+        )
+    
+    def test_patch(self):
+        url = reverse('usercountriesrelation-detail')
+        response = self.client.patch(url)
+        serializer_data = CountriesSerializers([self.countries_1, self.countries_2, self.countries_3], many=True).data
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(serializer_data, response.data)

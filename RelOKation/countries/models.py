@@ -10,7 +10,7 @@ class CountriesCard(models.Model):
     calling_code = models.CharField(max_length=255)
     internet_tld = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='my_countries')
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='my_country')
     reader = models.ManyToManyField(User, through='UserCountriesRelation', related_name='reader_countries')
 
     def __str__(self):

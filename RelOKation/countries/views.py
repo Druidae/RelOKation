@@ -1,10 +1,12 @@
 from django.shortcuts import render
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.mixins import UpdateModelMixin
+from rest_framework.permissions import IsAuthenticated
 
-from countries.models import CountriesCard
-from countries.serializers import CountriesSerializers
+from countries.models import CountriesCard, UserCountriesRelation
+from countries.serializers import CountriesSerializers, UserCountriesRelationSerializers
 from countries.permissions import IsOwnerOrStaffOrReadOnly
 
 
@@ -22,6 +24,15 @@ class CountriesViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.validated_data['owner'] = self.request.user
         serializer.save()
+
+
+class UserCountriesRelationViewSet(UpdateModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = UserCountriesRelation.objects.all()
+    serializer_class = UserCountriesRelationSerializers
+    lookup_field = 'countris'
+
+
 
 def main_page(request):
     return render(request, 'main_goest_user.html')
