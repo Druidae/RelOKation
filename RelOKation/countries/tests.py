@@ -8,7 +8,7 @@ from rest_framework.exceptions import ErrorDetail
 import json
 import os
 
-from countries.models import CountriesCard
+from countries.models import CountriesCard, UserCountriesRelation
 from countries.serializers import CountriesSerializers
 
 
@@ -147,7 +147,7 @@ class CountriesApiTestCase(APITestCase):
     def test_delete_not_owner(self):
         self.user2 = User.objects.create(username='test_username2',)        
         self.assertEqual(3, CountriesCard.objects.all().count())
-        url = reverse('countriescard-detail',args=(self.countries_1.id,))
+        url = reverse('countriescard-detail', args=(self.countries_1.id,))
         self.client.force_login(self.user2)
         response = self.client.delete(url)
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
@@ -156,7 +156,7 @@ class CountriesApiTestCase(APITestCase):
 
     def test_update_not_owner_but_staff(self):
         self.user2 = User.objects.create(username='test_username2', is_staff=True)
-        url = reverse('countriescard-detail',args=(self.countries_1.id,))
+        url = reverse('countriescard-detail', args=(self.countries_1.id,))
         data = {
             'country_name': self.countries_1.country_name,
             'currancy': self.countries_1.currancy,
@@ -252,9 +252,24 @@ class CountriesRelationsApiTestCase(APITestCase):
             owner = self.user
         )
     
-    def test_patch(self):
-        url = reverse('usercountriesrelation-detail')
-        response = self.client.patch(url)
-        serializer_data = CountriesSerializers([self.countries_1, self.countries_2, self.countries_3], many=True).data
+    def test_like(self):
+        url = reverse('usercountriesrelation-detail',args=(self.countries_1.id,))
+        data = {
+            "like": True,
+        }
+        json_data = json.dumps(data)
+        self.client.force_login(self.user)
+        response = self.client.patch(url, data=json_data, content_type='application/json')
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertEqual(serializer_data, response.data)
+        relation = UserCountriesRelation.objects.get(user=self.user, countries = self.countries_1)
+        self.assertTrue(relation.like)
+
+        data = {
+            'in_bookmarks': True,
+        }
+        json_data = json.dumps(data)
+        response = self.client.patch(url, data=json_data, content_type='application/json')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        relation = UserCountriesRelation.objects.get(user=self.user, countries = self.countries_1)
+        self.assertTrue(relation.in_bookmarks)
+

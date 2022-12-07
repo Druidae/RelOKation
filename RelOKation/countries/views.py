@@ -30,7 +30,13 @@ class UserCountriesRelationViewSet(UpdateModelMixin, GenericViewSet):
     permission_classes = [IsAuthenticated]
     queryset = UserCountriesRelation.objects.all()
     serializer_class = UserCountriesRelationSerializers
-    lookup_field = 'countris'
+    lookup_field = 'countries'
+
+    def get_object(self):
+        obj, created = UserCountriesRelation.objects.get_or_create(user = self.request.user, countries_id = self.kwargs['countries'])
+
+        print('created', created)
+        return obj
 
 
 

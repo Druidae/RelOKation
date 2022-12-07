@@ -21,7 +21,7 @@ class UserCountriesRelation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     countries = models.ForeignKey(CountriesCard, on_delete=models.CASCADE)
     like = models.BooleanField(default=False)
-    is_bookmarks = models.BooleanField(default=False)
+    in_bookmarks = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f'{self.user.username}: {self.countries}'

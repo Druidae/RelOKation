@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from countries.models import CountriesCard
+from countries.models import CountriesCard, UserCountriesRelation
 
 class CountriesSerializers(ModelSerializer):
     class Meta:
@@ -12,7 +12,7 @@ class CountriesSerializers(ModelSerializer):
 
 class UserCountriesRelationSerializers(ModelSerializer):
     class Meta:
-        model = CountriesCard
+        model = UserCountriesRelation
         # If you need concrete filters(like id or name or something else), use 
         #fields = ('id', 'name')
-        fields = ('countries', 'like', 'is_bookmarks')
+        fields = ('countries', 'like', 'in_bookmarks')
